@@ -15,3 +15,13 @@ struct HydrateRosterRequest: Codable {
         case teamID = "team_id"
     }
 }
+
+struct HydratePlayerCareerHittingStatsRequest: Codable {
+    var playerID: Int
+    var gameType: GameType
+    
+    enum CodingKeys: String, CodingKey {
+        case playerID = "player_id"
+        case gameType = "game_type"
+    }
+}
