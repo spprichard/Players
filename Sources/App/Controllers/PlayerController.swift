@@ -14,7 +14,7 @@ struct PlayerController: RouteCollection {
         router.get("api", "players", use: getAllHandler)
         router.post("api", "players", use: hydratePlayersHandler)
         router.get("api", "players", "hitting", "stats", use: getAllHittingStats)
-        // TODO: Create endpoint for hydrating hitting stats
+        router.post("api", "players", "hitting", "stats", use: hydratePlayerCareerHittingStatsHandler)
     }
     
     func getAllHandler(_ req: Request) throws -> Future<[Player]> {
@@ -38,5 +38,16 @@ struct PlayerController: RouteCollection {
     
     func getAllHittingStats(_ req: Request) throws -> Future<[Player.CareerHittingStats]> {
         return Player.CareerHittingStats.query(on: req).all()
+    }
+    
+    func hydratePlayerCareerHittingStatsHandler(_ req: Request) throws -> Future<Player.CareerHittingStats> {
+        return try req
+            .content
+            .decode(HydratePlayerCareerHittingStatsRequest.self)
+            .flatMap(to: Player.CareerHittingStats.self, { hydrate in
+                print("GameType: \(hydrate.gameType)")
+                let stats = try Player.CareerHittingStats.GetCareerHittingStats(gameType: hydrate.gameType, playerID: hydrate.playerID)
+                return stats.create(on: req)
+            })
     }
 }
