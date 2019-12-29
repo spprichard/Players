@@ -45,7 +45,6 @@ struct PlayerController: RouteCollection {
             .content
             .decode(HydratePlayerCareerHittingStatsRequest.self)
             .flatMap(to: Player.CareerHittingStats.self, { hydrate in
-                print("GameType: \(hydrate.gameType)")
                 let stats = try Player.CareerHittingStats.GetCareerHittingStats(gameType: hydrate.gameType, playerID: hydrate.playerID)
                 return stats.create(on: req)
             })
